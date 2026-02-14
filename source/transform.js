@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Функция, которая преобразует значения объекта с помощью переданной функции.
  * Если значение является объектом или массивом, оно обрабатывается рекурсивно.
@@ -17,15 +19,18 @@ const transform = function(obj, transformFn) {
     const result = Array.isArray(obj) ? [] : {};
 
     for (let key in obj) {
-        const value = obj[key];
-        // Проверяем, является ли значение объектом (массивы тоже сюда попадают)
-        // и не является ли оно null
-        if (typeof value === 'object' && value !== null) {
-            // Рекурсивный вызов для вложенных объектов и массивов
-            result[key] = transform(value, transformFn);
-        } else {
-            // Применяем функцию трансформации к примитивам
-            result[key] = transformFn(value);
+        // Это защищает от свойств из прототипа
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+            const value = obj[key];
+            // Проверяем, является ли значение объектом (массивы тоже сюда попадают)
+            // и не является ли оно null
+            if (typeof value === 'object' && value !== null) {
+                // Рекурсивный вызов для вложенных объектов и массивов
+                result[key] = transform(value, transformFn);
+            } else {
+                // Применяем функцию трансформации к примитивам
+                result[key] = transformFn(value);
+            }
         }
     }
 
