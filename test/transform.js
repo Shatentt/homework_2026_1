@@ -51,4 +51,29 @@ QUnit.module('Тестируем функцию transform', () => {
 
         assert.deepEqual(originalObject, copy, 'Исходный объект должен остаться нетронутым (чистая функция)');
     });
+    QUnit.test('Работает с разными типами данных (строки, булевы значения, undefined)', (assert) => {
+        const originalObject = {
+            name: 'ivan',
+            active: true,
+            data: undefined,
+            age: 20
+        };
+        
+        // cтроки в верхний регистр, числа +1, остальное - не трогаем
+        const transformFunction = (value) => {
+            if (typeof value === 'string') return value.toUpperCase();
+            if (typeof value === 'number') return value + 1;
+            return value;
+        };
+
+        const expected = {
+            name: 'IVAN',
+            active: true,
+            data: undefined,
+            age: 21
+        };
+
+        const result = transform(originalObject, transformFunction);
+        assert.deepEqual(result, expected, 'Должен корректно обрабатывать строки, bool и undefined');
+    });
 });
